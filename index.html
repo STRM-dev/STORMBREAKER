@@ -39,6 +39,42 @@ body{
     radial-gradient(ellipse 120% 70% at 50% 110%, rgba(11,74,143,.32), transparent 70%),
     linear-gradient(180deg, #060c17 0%, #04070d 45%, #03060c 100%);
 }
+/* Animated aurora ribbons */
+.aurora{
+  position:fixed;inset:-20%;z-index:0;pointer-events:none;
+  opacity:.5;
+  mix-blend-mode:screen;
+  filter:blur(60px);
+  background:
+    radial-gradient(ellipse 30% 20% at 20% 30%, rgba(46,155,255,.35), transparent 70%),
+    radial-gradient(ellipse 25% 18% at 80% 20%, rgba(126,200,255,.28), transparent 72%),
+    radial-gradient(ellipse 35% 22% at 50% 60%, rgba(11,74,143,.42), transparent 74%),
+    radial-gradient(ellipse 22% 16% at 15% 80%, rgba(46,155,255,.22), transparent 70%);
+  animation:auroraShift 28s ease-in-out infinite alternate;
+}
+@keyframes auroraShift{
+  0%   { transform:translate3d(-4%, -2%, 0) scale(1)   rotate(0deg); opacity:.35; }
+  50%  { transform:translate3d(3%, 2%, 0)   scale(1.08) rotate(3deg); opacity:.6;  }
+  100% { transform:translate3d(5%, -3%, 0)  scale(1.04) rotate(-2deg); opacity:.45; }
+}
+/* Drifting grid overlay */
+.grid-bg{
+  position:fixed;inset:-40% -20%;z-index:1;pointer-events:none;
+  opacity:.10;
+  background-image:
+    linear-gradient(rgba(46,155,255,.6) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(46,155,255,.6) 1px, transparent 1px);
+  background-size:70px 70px;
+  transform:perspective(500px) rotateX(58deg) translateZ(0);
+  transform-origin:50% 50%;
+  animation:gridDrift 22s linear infinite;
+  mask-image:radial-gradient(ellipse 70% 60% at 50% 50%, #000 20%, transparent 78%);
+  -webkit-mask-image:radial-gradient(ellipse 70% 60% at 50% 50%, #000 20%, transparent 78%);
+}
+@keyframes gridDrift{
+  from{ background-position:0 0, 0 0; }
+  to  { background-position:0 70px, 70px 0; }
+}
 .haze{
   position:fixed;inset:-20% -40%;z-index:1;pointer-events:none;opacity:.55;
   background:
@@ -309,17 +345,47 @@ h2 em{font-style:normal;color:var(--blue);text-shadow:0 0 26px rgba(46,155,255,.
   flex:0 0 auto;width:132px;height:132px;
   border:1px solid var(--blue);border-radius:50%;
   display:flex;align-items:center;justify-content:center;
-  font-family:'Orbitron',sans-serif;font-size:42px;font-weight:900;
-  color:var(--blue-hot);letter-spacing:.04em;
   background:radial-gradient(circle at 50% 40%, rgba(46,155,255,.2), rgba(4,7,13,.9));
-  text-shadow:0 0 24px rgba(46,155,255,.8);
   box-shadow:0 0 34px rgba(46,155,255,.35), inset 0 0 24px rgba(46,155,255,.14);
   position:relative;
+}
+/* Pulsing ring behind owner avatar */
+.owner-avatar::before{
+  content:"";position:absolute;inset:-14px;
+  border:1px solid rgba(46,155,255,.35);
+  border-radius:50%;
+  animation:ringPulse 3.2s ease-out infinite;
+  pointer-events:none;
+}
+@keyframes ringPulse{
+  0%   { transform:scale(0.92); opacity:.65; }
+  70%  { transform:scale(1.25); opacity:0;   }
+  100% { transform:scale(1.25); opacity:0;   }
+}
+.owner-emblem{
+  position:absolute;inset:15%;
+  width:70%;height:70%;
+  color:var(--blue);
+  opacity:.38;
+  pointer-events:none;
+  transition:opacity .35s, color .35s, filter .35s;
+}
+.owner-card:hover .owner-emblem{
+  opacity:.85;
+  color:var(--blue-hot);
+  filter:drop-shadow(0 0 8px rgba(46,155,255,.6));
+}
+.owner-initials{
+  position:relative;z-index:1;
+  font-family:'Orbitron',sans-serif;font-size:42px;font-weight:900;
+  color:var(--blue-hot);letter-spacing:.04em;
+  text-shadow:0 0 24px rgba(46,155,255,.8);
 }
 .owner-avatar::after{
   content:"";position:absolute;inset:-8px;
   border:1px solid rgba(46,155,255,.18);border-radius:50%;
   animation:spinSimple 28s linear infinite;
+  pointer-events:none;
 }
 @keyframes spinSimple{to{transform:rotate(360deg)}}
 .owner-info .role-badge{
@@ -357,23 +423,52 @@ h2 em{font-style:normal;color:var(--blue);text-shadow:0 0 26px rgba(46,155,255,.
 }
 .member-card:hover::before{opacity:1}
 .avatar{
+  position:relative;
   width:76px;height:76px;margin:0 auto 20px;
   border:1px solid rgba(46,155,255,.45);border-radius:50%;
   display:flex;align-items:center;justify-content:center;
+  background:radial-gradient(circle at 50% 40%, rgba(46,155,255,.16), rgba(4,7,13,.9));
+  transition:box-shadow .35s, border-color .35s;
+  overflow:visible;
+}
+/* Pulsing ring behind member avatars */
+.avatar::before{
+  content:"";position:absolute;inset:-9px;
+  border:1px solid rgba(46,155,255,.30);
+  border-radius:50%;
+  animation:ringPulse 3.6s ease-out infinite;
+  animation-delay:var(--ringDelay, 0s);
+  pointer-events:none;
+}
+.avatar-emblem{
+  position:absolute;inset:9%;
+  width:82%;height:82%;
+  color:var(--blue);
+  opacity:.42;
+  pointer-events:none;
+  transition:opacity .35s, color .35s, filter .35s;
+}
+.member-card:hover .avatar-emblem{
+  opacity:.9;
+  color:var(--blue-hot);
+  filter:drop-shadow(0 0 6px rgba(46,155,255,.55));
+}
+.avatar-initials{
+  position:relative;z-index:1;
   font-family:'Orbitron',sans-serif;font-size:23px;font-weight:800;
   color:var(--blue-hot);
-  background:radial-gradient(circle at 50% 40%, rgba(46,155,255,.16), rgba(4,7,13,.9));
+  letter-spacing:.02em;
   text-shadow:0 0 18px rgba(46,155,255,.7);
-  transition:box-shadow .35s, border-color .35s;
 }
 .member-card:hover .avatar{
   border-color:var(--blue-hot);
   box-shadow:0 0 26px rgba(46,155,255,.4), inset 0 0 18px rgba(46,155,255,.12);
 }
 .tier-leaders .avatar{
-  width:92px;height:92px;font-size:28px;border-color:var(--blue);
+  width:92px;height:92px;border-color:var(--blue);
   box-shadow:0 0 22px rgba(46,155,255,.22);
 }
+.tier-leaders .avatar-initials{font-size:28px}
 .m-name{
   font-family:'Orbitron',sans-serif;font-size:16px;font-weight:800;
   color:#eaf2fb;letter-spacing:.08em;margin-bottom:8px;
@@ -729,12 +824,15 @@ footer a:hover{color:var(--blue-hot)}
   *{animation:none!important;transition:none!important}
   .reveal{opacity:1;transform:none}
   .haze{animation:none}
+  .aurora{animation:none}
+  .grid-bg{animation:none}
+  .avatar::before,.owner-avatar::before{animation:none}
 }
 </style>
 </head>
 <body>
 
-<!-- ============ SVG SPRITE (brand mark + icons, drawn once) ============ -->
+<!-- ============ SVG SPRITE (brand mark + icons + player emblems) ============ -->
 <svg width="0" height="0" style="position:absolute" aria-hidden="true">
   <defs>
     <radialGradient id="discGrad" cx="50%" cy="42%" r="60%">
@@ -770,14 +868,120 @@ footer a:hover{color:var(--blue-hot)}
       <polygon points="30,548 872,548 836,662 0,662" fill="rgba(4,7,13,0.55)" stroke="#2e9bff" stroke-width="2"/>
       <text x="450" y="627" text-anchor="middle" font-family="Orbitron, sans-serif" font-size="74" font-weight="900" letter-spacing="3" fill="url(#steelGrad)" stroke="#131b26" stroke-width="2" paint-order="stroke fill">STORMINGBREAKER</text>
     </g>
+
     <symbol id="ico-fb" viewBox="0 0 24 24">
       <path d="M22 12.06C22 6.5 17.52 2 12 2S2 6.5 2 12.06c0 5.02 3.66 9.18 8.44 9.94v-7.03H7.9v-2.9h2.54V9.85c0-2.52 1.5-3.91 3.77-3.91 1.09 0 2.24.2 2.24.2v2.46h-1.26c-1.24 0-1.63.78-1.63 1.57v1.89h2.78l-.45 2.9h-2.33V22c4.78-.76 8.44-4.92 8.44-9.94z"/>
+    </symbol>
+
+    <!-- ============ PLAYER EMBLEMS / LOGOS ============ -->
+    <symbol id="em-crown" viewBox="0 0 64 64">
+      <path d="M8 46 L14 18 L24 32 L32 12 L40 32 L50 18 L56 46 Z" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linejoin="round" stroke-linecap="round"/>
+      <path d="M12 52 H52" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round"/>
+      <circle cx="32" cy="30" r="2.5" fill="currentColor"/>
+    </symbol>
+
+    <symbol id="em-bolt" viewBox="0 0 64 64">
+      <path d="M36 4 L14 34 H27 L23 60 L50 28 H35 Z" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linejoin="round" stroke-linecap="round"/>
+    </symbol>
+
+    <symbol id="em-shield" viewBox="0 0 64 64">
+      <path d="M32 6 L54 14 V34 C54 46 44 55 32 59 C20 55 10 46 10 34 V14 Z" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linejoin="round"/>
+      <path d="M32 18 V44 M22 30 H42" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+    </symbol>
+
+    <symbol id="em-diamond" viewBox="0 0 64 64">
+      <path d="M32 6 L58 32 L32 58 L6 32 Z" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linejoin="round"/>
+      <path d="M32 18 L46 32 L32 46 L18 32 Z" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round" opacity="0.7"/>
+    </symbol>
+
+    <symbol id="em-tri" viewBox="0 0 64 64">
+      <path d="M32 8 L58 54 H6 Z" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linejoin="round"/>
+      <path d="M32 26 V44" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+    </symbol>
+
+    <symbol id="em-octa" viewBox="0 0 64 64">
+      <path d="M22 8 H42 L56 22 V42 L42 56 H22 L8 42 V22 Z" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linejoin="round"/>
+      <circle cx="32" cy="32" r="6" fill="none" stroke="currentColor" stroke-width="2"/>
+    </symbol>
+
+    <symbol id="em-chev" viewBox="0 0 64 64">
+      <path d="M10 18 L32 34 L54 18" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linejoin="round" stroke-linecap="round"/>
+      <path d="M10 36 L32 52 L54 36" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linejoin="round" stroke-linecap="round"/>
+    </symbol>
+
+    <symbol id="em-star" viewBox="0 0 64 64">
+      <path d="M32 6 L36 26 L56 32 L36 38 L32 58 L28 38 L8 32 L28 26 Z" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linejoin="round"/>
+      <path d="M20 20 L44 44 M44 20 L20 44" fill="none" stroke="currentColor" stroke-width="1.5" opacity="0.55" stroke-linecap="round"/>
+    </symbol>
+
+    <symbol id="em-wing" viewBox="0 0 64 64">
+      <path d="M32 6 L44 26 H36 V58 H28 V26 H20 Z" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linejoin="round"/>
+      <path d="M12 34 L22 40 L12 46" fill="none" stroke="currentColor" stroke-width="2" stroke-linejoin="round" stroke-linecap="round"/>
+      <path d="M52 34 L42 40 L52 46" fill="none" stroke="currentColor" stroke-width="2" stroke-linejoin="round" stroke-linecap="round"/>
+    </symbol>
+
+    <symbol id="em-rune" viewBox="0 0 64 64">
+      <path d="M20 8 V56" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round"/>
+      <path d="M20 18 L46 8 M20 34 L46 24 M20 50 L46 40" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"/>
+    </symbol>
+
+    <symbol id="em-ring" viewBox="0 0 64 64">
+      <circle cx="32" cy="32" r="24" fill="none" stroke="currentColor" stroke-width="2.4"/>
+      <circle cx="32" cy="32" r="14" fill="none" stroke="currentColor" stroke-width="2"/>
+      <circle cx="32" cy="32" r="4" fill="currentColor"/>
+    </symbol>
+
+    <symbol id="em-grid" viewBox="0 0 64 64">
+      <path d="M32 8 L56 32 L32 56 L8 32 Z" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linejoin="round"/>
+      <path d="M32 18 L46 32 L32 46 L18 32 Z" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round"/>
+      <path d="M32 8 V56 M8 32 H56" fill="none" stroke="currentColor" stroke-width="1.3" opacity="0.55"/>
+    </symbol>
+
+    <symbol id="em-fang" viewBox="0 0 64 64">
+      <path d="M18 10 L22 40 L32 56 L42 40 L46 10" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linejoin="round" stroke-linecap="round"/>
+      <path d="M26 22 L32 40 L38 22" fill="none" stroke="currentColor" stroke-width="2" stroke-linejoin="round"/>
+    </symbol>
+
+    <symbol id="em-spear" viewBox="0 0 64 64">
+      <path d="M32 4 L40 24 L32 30 L24 24 Z" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linejoin="round"/>
+      <path d="M32 30 V58" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round"/>
+      <path d="M22 42 L32 36 L42 42" fill="none" stroke="currentColor" stroke-width="2" stroke-linejoin="round"/>
+    </symbol>
+
+    <symbol id="em-orbit" viewBox="0 0 64 64">
+      <ellipse cx="32" cy="32" rx="26" ry="12" fill="none" stroke="currentColor" stroke-width="2.2" transform="rotate(-30 32 32)"/>
+      <circle cx="32" cy="32" r="7" fill="none" stroke="currentColor" stroke-width="2.4"/>
+      <circle cx="52" cy="20" r="3" fill="currentColor"/>
+    </symbol>
+
+    <symbol id="em-pyramid" viewBox="0 0 64 64">
+      <path d="M32 8 L56 52 H8 Z" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linejoin="round"/>
+      <path d="M20 52 L32 30 L44 52" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round"/>
+      <path d="M26 52 L32 41 L38 52" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linejoin="round"/>
+    </symbol>
+
+    <symbol id="em-arrow" viewBox="0 0 64 64">
+      <path d="M32 6 L48 26 H38 V58 H26 V26 H16 Z" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linejoin="round"/>
+    </symbol>
+
+    <symbol id="em-blade" viewBox="0 0 64 64">
+      <path d="M32 4 L42 30 L32 58 L22 30 Z" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linejoin="round"/>
+      <path d="M32 4 V58" fill="none" stroke="currentColor" stroke-width="1.4" opacity="0.55"/>
+      <path d="M22 30 H42" fill="none" stroke="currentColor" stroke-width="1.4" opacity="0.55"/>
+    </symbol>
+
+    <symbol id="em-flare" viewBox="0 0 64 64">
+      <circle cx="32" cy="32" r="6" fill="none" stroke="currentColor" stroke-width="2.4"/>
+      <path d="M32 4 V16 M32 48 V60 M4 32 H16 M48 32 H60 M12 12 L20 20 M44 44 L52 52 M52 12 L44 20 M20 44 L12 52" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"/>
     </symbol>
   </defs>
 </svg>
 <!-- ============ /SVG SPRITE ============ -->
 
+<!-- ============ ANIMATED BACKGROUND LAYERS ============ -->
 <div class="sky-field"></div>
+<div class="aurora"></div>
+<div class="grid-bg"></div>
 <div class="haze"></div>
 <canvas id="storm"></canvas>
 <div class="grain"></div>
@@ -868,7 +1072,9 @@ footer a:hover{color:var(--blue-hot)}
         <svg class="corner-mark" viewBox="0 0 900 760" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
           <use href="#brandMark"/>
         </svg>
-        <div class="owner-avatar">SK</div>
+        <div class="owner-avatar" data-emblem="crown">
+          <span class="owner-initials">SK</span>
+        </div>
         <div class="owner-info">
           <div class="role-badge">Owner / Founder</div>
           <h3>STRM—S'KRE</h3>
@@ -895,7 +1101,7 @@ footer a:hover{color:var(--blue-hot)}
       <div class="roster-grid">
         <div class="member-card">
           <svg class="corner-mark" viewBox="0 0 900 760" xmlns="http://www.w3.org/2000/svg" aria-hidden="true"><use href="#brandMark"/></svg>
-          <div class="avatar">XI</div>
+          <div class="avatar" data-emblem="bolt"><span class="avatar-initials">XI</span></div>
           <div class="m-name">STRM—X'IRT</div>
           <div class="m-role lead">Division Lead</div>
           <button class="game-btn" type="button"
@@ -916,7 +1122,7 @@ footer a:hover{color:var(--blue-hot)}
       <div class="roster-grid">
         <div class="member-card">
           <svg class="corner-mark" viewBox="0 0 900 760" xmlns="http://www.w3.org/2000/svg" aria-hidden="true"><use href="#brandMark"/></svg>
-          <div class="avatar">IS</div>
+          <div class="avatar" data-emblem="shield"><span class="avatar-initials">IS</span></div>
           <div class="m-name">STRQ—ISAY</div>
           <button class="game-btn" type="button" data-game="VIDEO_ID_HERE" data-name="STRQ—ISAY — Knives Out">Knives Out</button>
           <div class="m-links">
@@ -927,7 +1133,7 @@ footer a:hover{color:var(--blue-hot)}
         </div>
         <div class="member-card">
           <svg class="corner-mark" viewBox="0 0 900 760" xmlns="http://www.w3.org/2000/svg" aria-hidden="true"><use href="#brandMark"/></svg>
-          <div class="avatar">GE</div>
+          <div class="avatar" data-emblem="diamond"><span class="avatar-initials">GE</span></div>
           <div class="m-name">STRQ—GEL</div>
           <button class="game-btn" type="button" data-game="VIDEO_ID_HERE" data-name="STRQ—GEL — Knives Out">Knives Out</button>
           <div class="m-links">
@@ -938,7 +1144,7 @@ footer a:hover{color:var(--blue-hot)}
         </div>
         <div class="member-card">
           <svg class="corner-mark" viewBox="0 0 900 760" xmlns="http://www.w3.org/2000/svg" aria-hidden="true"><use href="#brandMark"/></svg>
-          <div class="avatar">AS</div>
+          <div class="avatar" data-emblem="tri"><span class="avatar-initials">AS</span></div>
           <div class="m-name">STRQ—ASHIEE</div>
           <button class="game-btn" type="button" data-game="VIDEO_ID_HERE" data-name="STRQ—ASHIEE — Knives Out">Knives Out</button>
           <div class="m-links">
@@ -949,7 +1155,7 @@ footer a:hover{color:var(--blue-hot)}
         </div>
         <div class="member-card">
           <svg class="corner-mark" viewBox="0 0 900 760" xmlns="http://www.w3.org/2000/svg" aria-hidden="true"><use href="#brandMark"/></svg>
-          <div class="avatar">SH</div>
+          <div class="avatar" data-emblem="octa"><span class="avatar-initials">SH</span></div>
           <div class="m-name">STRQ—SHIEE</div>
           <button class="game-btn" type="button" data-game="VIDEO_ID_HERE" data-name="STRQ—SHIEE — Knives Out">Knives Out</button>
           <div class="m-links">
@@ -960,7 +1166,7 @@ footer a:hover{color:var(--blue-hot)}
         </div>
         <div class="member-card">
           <svg class="corner-mark" viewBox="0 0 900 760" xmlns="http://www.w3.org/2000/svg" aria-hidden="true"><use href="#brandMark"/></svg>
-          <div class="avatar">JA</div>
+          <div class="avatar" data-emblem="chev"><span class="avatar-initials">JA</span></div>
           <div class="m-name">STRQ—JAYA</div>
           <button class="game-btn" type="button" data-game="VIDEO_ID_HERE" data-name="STRQ—JAYA — Knives Out">Knives Out</button>
           <div class="m-links">
@@ -978,7 +1184,7 @@ footer a:hover{color:var(--blue-hot)}
       <div class="roster-grid">
         <div class="member-card">
           <svg class="corner-mark" viewBox="0 0 900 760" xmlns="http://www.w3.org/2000/svg" aria-hidden="true"><use href="#brandMark"/></svg>
-          <div class="avatar">ER</div>
+          <div class="avatar" data-emblem="star"><span class="avatar-initials">ER</span></div>
           <div class="m-name">STRM—`ERICZ</div>
           <button class="game-btn" type="button" data-game="VIDEO_ID_HERE" data-name="STRM—`ERICZ — Knives Out">Knives Out</button>
           <div class="m-links">
@@ -989,7 +1195,7 @@ footer a:hover{color:var(--blue-hot)}
         </div>
         <div class="member-card">
           <svg class="corner-mark" viewBox="0 0 900 760" xmlns="http://www.w3.org/2000/svg" aria-hidden="true"><use href="#brandMark"/></svg>
-          <div class="avatar">CE</div>
+          <div class="avatar" data-emblem="wing"><span class="avatar-initials">CE</span></div>
           <div class="m-name">STRM—CESS</div>
           <button class="game-btn" type="button" data-game="VIDEO_ID_HERE" data-name="STRM—CESS — Knives Out">Knives Out</button>
           <div class="m-links">
@@ -1000,7 +1206,7 @@ footer a:hover{color:var(--blue-hot)}
         </div>
         <div class="member-card">
           <svg class="corner-mark" viewBox="0 0 900 760" xmlns="http://www.w3.org/2000/svg" aria-hidden="true"><use href="#brandMark"/></svg>
-          <div class="avatar">BL</div>
+          <div class="avatar" data-emblem="rune"><span class="avatar-initials">BL</span></div>
           <div class="m-name">STRM—BLXND</div>
           <button class="game-btn" type="button" data-game="VIDEO_ID_HERE" data-name="STRM—BLXND — Knives Out">Knives Out</button>
           <div class="m-links">
@@ -1011,7 +1217,7 @@ footer a:hover{color:var(--blue-hot)}
         </div>
         <div class="member-card">
           <svg class="corner-mark" viewBox="0 0 900 760" xmlns="http://www.w3.org/2000/svg" aria-hidden="true"><use href="#brandMark"/></svg>
-          <div class="avatar">PR</div>
+          <div class="avatar" data-emblem="ring"><span class="avatar-initials">PR</span></div>
           <div class="m-name">STRM—PRO</div>
           <button class="game-btn" type="button" data-game="VIDEO_ID_HERE" data-name="STRM—PRO — Knives Out">Knives Out</button>
           <div class="m-links">
@@ -1022,7 +1228,7 @@ footer a:hover{color:var(--blue-hot)}
         </div>
         <div class="member-card">
           <svg class="corner-mark" viewBox="0 0 900 760" xmlns="http://www.w3.org/2000/svg" aria-hidden="true"><use href="#brandMark"/></svg>
-          <div class="avatar">JA</div>
+          <div class="avatar" data-emblem="grid"><span class="avatar-initials">JA</span></div>
           <div class="m-name">STRM—J`ASx</div>
           <button class="game-btn" type="button" data-game="VIDEO_ID_HERE" data-name="STRM—J`ASx — Knives Out">Knives Out</button>
           <div class="m-links">
@@ -1033,7 +1239,7 @@ footer a:hover{color:var(--blue-hot)}
         </div>
         <div class="member-card">
           <svg class="corner-mark" viewBox="0 0 900 760" xmlns="http://www.w3.org/2000/svg" aria-hidden="true"><use href="#brandMark"/></svg>
-          <div class="avatar">MA</div>
+          <div class="avatar" data-emblem="fang"><span class="avatar-initials">MA</span></div>
           <div class="m-name">STRM—M'ART</div>
           <button class="game-btn" type="button" data-game="VIDEO_ID_HERE" data-name="STRM—M'ART — Knives Out">Knives Out</button>
           <div class="m-links">
@@ -1044,7 +1250,7 @@ footer a:hover{color:var(--blue-hot)}
         </div>
         <div class="member-card">
           <svg class="corner-mark" viewBox="0 0 900 760" xmlns="http://www.w3.org/2000/svg" aria-hidden="true"><use href="#brandMark"/></svg>
-          <div class="avatar">TK</div>
+          <div class="avatar" data-emblem="spear"><span class="avatar-initials">TK</span></div>
           <div class="m-name">STRM—TAKT</div>
           <button class="game-btn" type="button" data-game="VIDEO_ID_HERE" data-name="STRM—TAKT — Knives Out">Knives Out</button>
           <div class="m-links">
@@ -1055,7 +1261,7 @@ footer a:hover{color:var(--blue-hot)}
         </div>
         <div class="member-card">
           <svg class="corner-mark" viewBox="0 0 900 760" xmlns="http://www.w3.org/2000/svg" aria-hidden="true"><use href="#brandMark"/></svg>
-          <div class="avatar">CH</div>
+          <div class="avatar" data-emblem="orbit"><span class="avatar-initials">CH</span></div>
           <div class="m-name">STRM—CHER</div>
           <button class="game-btn" type="button" data-game="VIDEO_ID_HERE" data-name="STRM—CHER — Knives Out">Knives Out</button>
           <div class="m-links">
@@ -1066,7 +1272,7 @@ footer a:hover{color:var(--blue-hot)}
         </div>
         <div class="member-card">
           <svg class="corner-mark" viewBox="0 0 900 760" xmlns="http://www.w3.org/2000/svg" aria-hidden="true"><use href="#brandMark"/></svg>
-          <div class="avatar">CA</div>
+          <div class="avatar" data-emblem="pyramid"><span class="avatar-initials">CA</span></div>
           <div class="m-name">STRM—C`ARL</div>
           <button class="game-btn" type="button" data-game="VIDEO_ID_HERE" data-name="STRM—C`ARL — Knives Out">Knives Out</button>
           <div class="m-links">
@@ -1077,7 +1283,7 @@ footer a:hover{color:var(--blue-hot)}
         </div>
         <div class="member-card">
           <svg class="corner-mark" viewBox="0 0 900 760" xmlns="http://www.w3.org/2000/svg" aria-hidden="true"><use href="#brandMark"/></svg>
-          <div class="avatar">TE</div>
+          <div class="avatar" data-emblem="arrow"><span class="avatar-initials">TE</span></div>
           <div class="m-name">STRM—TEMA</div>
           <button class="game-btn" type="button" data-game="VIDEO_ID_HERE" data-name="STRM—TEMA — Knives Out">Knives Out</button>
           <div class="m-links">
@@ -1088,7 +1294,7 @@ footer a:hover{color:var(--blue-hot)}
         </div>
         <div class="member-card">
           <svg class="corner-mark" viewBox="0 0 900 760" xmlns="http://www.w3.org/2000/svg" aria-hidden="true"><use href="#brandMark"/></svg>
-          <div class="avatar">XN</div>
+          <div class="avatar" data-emblem="blade"><span class="avatar-initials">XN</span></div>
           <div class="m-name">STRM—X'NJ</div>
           <button class="game-btn" type="button" data-game="VIDEO_ID_HERE" data-name="STRM—X'NJ — Knives Out">Knives Out</button>
           <div class="m-links">
@@ -1097,10 +1303,9 @@ footer a:hover{color:var(--blue-hot)}
             </a>
           </div>
         </div>
-        <!-- STRM—DONG -->
         <div class="member-card">
           <svg class="corner-mark" viewBox="0 0 900 760" xmlns="http://www.w3.org/2000/svg" aria-hidden="true"><use href="#brandMark"/></svg>
-          <div class="avatar">DO</div>
+          <div class="avatar" data-emblem="flare"><span class="avatar-initials">DO</span></div>
           <div class="m-name">STRM—DONG</div>
           <button class="game-btn" type="button" data-game="VIDEO_ID_HERE" data-name="STRM—DONG — Knives Out">Knives Out</button>
           <div class="m-links">
@@ -1307,6 +1512,30 @@ addEventListener('scroll', () => {
 }, {passive:true});
 
 /* ============================================================
+   PLAYER EMBLEMS (logos)
+   ============================================================ */
+(function(){
+  const NS = 'http://www.w3.org/2000/svg';
+  const avatars = document.querySelectorAll('[data-emblem]');
+  let i = 0;
+  avatars.forEach(el => {
+    const id = el.dataset.emblem;
+    if (!id) return;
+    const svg = document.createElementNS(NS, 'svg');
+    svg.setAttribute('viewBox', '0 0 64 64');
+    svg.setAttribute('aria-hidden', 'true');
+    svg.setAttribute('class', el.classList.contains('owner-avatar') ? 'owner-emblem' : 'avatar-emblem');
+    const use = document.createElementNS(NS, 'use');
+    use.setAttribute('href', '#em-' + id);
+    svg.appendChild(use);
+    el.insertBefore(svg, el.firstChild);
+    // Stagger the pulsing ring so avatars don't beat in unison
+    el.style.setProperty('--ringDelay', (i * 0.22).toFixed(2) + 's');
+    i++;
+  });
+})();
+
+/* ============================================================
    REVEAL
    ============================================================ */
 const io = new IntersectionObserver((entries) => {
@@ -1420,7 +1649,6 @@ document.querySelectorAll('.reveal').forEach((el, i) => {
   let isPlaying   = false;
   let playerReady = false;
 
-  // >>> REPLACE THE VIDEO ID BELOW WITH YOUR OWN <<<
   const VIDEO_ID = 'fKopy74weus';
 
   window.onYouTubeIframeAPIReady = function() {
@@ -1537,6 +1765,7 @@ document.querySelectorAll('.reveal').forEach((el, i) => {
 
 /* ============================================================
    STORM — animated background
+   (rain · clouds · bolts · thunder · floating embers)
    ============================================================ */
 (function(){
   const cvs = document.getElementById('storm');
@@ -1563,6 +1792,26 @@ document.querySelectorAll('.reveal').forEach((el, i) => {
     rain.length = 0;
     const target = Math.min(420, Math.floor((innerWidth * innerHeight) / 3600));
     for (let i = 0; i < target; i++) rain.push(makeDrop(true));
+  }
+
+  /* Floating embers / motes drifting upward */
+  const embers = [];
+  function makeEmber(seed){
+    return {
+      x: Math.random() * W,
+      y: seed ? Math.random() * H : H + 30 * dpr,
+      r: (0.6 + Math.random() * 1.8) * dpr,
+      vy: -(12 + Math.random() * 38) * dpr,
+      vx: (Math.random() - 0.5) * 22 * dpr,
+      alpha: 0.15 + Math.random() * 0.45,
+      phase: Math.random() * Math.PI * 2,
+      wobble: 0.4 + Math.random() * 0.9
+    };
+  }
+  function initEmbers(){
+    embers.length = 0;
+    const target = Math.min(90, Math.floor((innerWidth * innerHeight) / 22000));
+    for (let i = 0; i < target; i++) embers.push(makeEmber(true));
   }
 
   const bolts = [];
@@ -1658,6 +1907,39 @@ document.querySelectorAll('.reveal').forEach((el, i) => {
     g2.addColorStop(1, 'rgba(4,7,13,0)');
     ctx.fillStyle = g2;
     ctx.fillRect(0, H * 0.5, W, H * 0.5);
+  }
+
+  function drawEmbers(now, dt){
+    const base = 0.55 + flash * 0.6 + thunder * 0.4;
+    for (let i = 0; i < embers.length; i++){
+      const e = embers[i];
+      e.y += e.vy * dt;
+      e.x += (e.vx + Math.sin(now * 0.001 + e.phase) * e.wobble * 8 * dpr) * dt;
+
+      if (e.y < -30 * dpr || e.x < -30 * dpr || e.x > W + 30 * dpr){
+        const n = makeEmber(false);
+        e.x = n.x;
+        e.y = H + 30 * dpr;
+        e.r = n.r; e.vy = n.vy; e.vx = n.vx;
+        e.alpha = n.alpha; e.phase = n.phase; e.wobble = n.wobble;
+      }
+
+      const pulse = 0.7 + Math.sin(now * 0.002 + e.phase) * 0.3;
+      const alpha = e.alpha * pulse * base;
+
+      // soft glow halo
+      const gr = ctx.createRadialGradient(e.x, e.y, 0, e.x, e.y, e.r * 6);
+      gr.addColorStop(0, `rgba(180,225,255,${alpha * 0.65})`);
+      gr.addColorStop(1, 'rgba(126,200,255,0)');
+      ctx.fillStyle = gr;
+      ctx.fillRect(e.x - e.r * 6, e.y - e.r * 6, e.r * 12, e.r * 12);
+
+      // core dot
+      ctx.fillStyle = `rgba(230,245,255,${alpha})`;
+      ctx.beginPath();
+      ctx.arc(e.x, e.y, e.r, 0, Math.PI * 2);
+      ctx.fill();
+    }
   }
 
   function drawRain(dt){
@@ -1801,6 +2083,7 @@ document.querySelectorAll('.reveal').forEach((el, i) => {
     }
 
     drawClouds(t);
+    drawEmbers(now, dt);
     drawRain(dt);
     drawShockwaves(dt);
     drawBolts(dt);
@@ -1837,6 +2120,7 @@ document.querySelectorAll('.reveal').forEach((el, i) => {
     cvs.style.left   = (-PAD) + 'px';
     cvs.style.top    = (-PAD) + 'px';
     initRain();
+    initEmbers();
   }
 
   resize();
