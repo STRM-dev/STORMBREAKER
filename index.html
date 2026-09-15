@@ -881,7 +881,7 @@ footer a:hover{color:var(--blue-hot)}
                   data-game="VIDEO_ID_HERE"
                   data-name="STRM—S'KRE — Knives Out">Knives Out</button>
           <div class="m-links">
-            <a class="soc" href="https://facebook.com/strm.skre" target="_blank" rel="noopener noreferrer" aria-label="Facebook — STRM—S'KRE">
+            <a class="soc" href="https://www.facebook.com/allen.james.492022" target="_blank" rel="noopener noreferrer" aria-label="Facebook — STRM—S'KRE">
               <svg viewBox="0 0 24 24" aria-hidden="true"><use href="#ico-fb"/></svg>
             </a>
           </div>
@@ -902,7 +902,7 @@ footer a:hover{color:var(--blue-hot)}
                   data-game="VIDEO_ID_HERE"
                   data-name="STRM—X'IRT — Knives Out">Knives Out</button>
           <div class="m-links">
-            <a class="soc" href="https://facebook.com/strm.xirt" target="_blank" rel="noopener noreferrer" aria-label="Facebook — STRM—X'IRT">
+            <a class="soc" href="https://www.facebook.com/adrian.jimenez.522458" target="_blank" rel="noopener noreferrer" aria-label="Facebook — STRM—X'IRT">
               <svg viewBox="0 0 24 24" aria-hidden="true"><use href="#ico-fb"/></svg>
             </a>
           </div>
@@ -993,7 +993,7 @@ footer a:hover{color:var(--blue-hot)}
           <div class="m-name">STRM—CESS</div>
           <button class="game-btn" type="button" data-game="VIDEO_ID_HERE" data-name="STRM—CESS — Knives Out">Knives Out</button>
           <div class="m-links">
-            <a class="soc" href="https://facebook.com/strm.cess" target="_blank" rel="noopener noreferrer" aria-label="Facebook — STRM—CESS">
+            <a class="soc" href="https://www.facebook.com/profile.php?id=61584373484258" target="_blank" rel="noopener noreferrer" aria-label="Facebook — STRM—CESS">
               <svg viewBox="0 0 24 24" aria-hidden="true"><use href="#ico-fb"/></svg>
             </a>
           </div>
@@ -1059,7 +1059,7 @@ footer a:hover{color:var(--blue-hot)}
           <div class="m-name">STRM—CHER</div>
           <button class="game-btn" type="button" data-game="VIDEO_ID_HERE" data-name="STRM—CHER — Knives Out">Knives Out</button>
           <div class="m-links">
-            <a class="soc" href="https://facebook.com/strm.cher" target="_blank" rel="noopener noreferrer" aria-label="Facebook — STRM—CHER">
+            <a class="soc" href="https://www.facebook.com/profile.php?id=61571244710715" target="_blank" rel="noopener noreferrer" aria-label="Facebook — STRM—CHER">
               <svg viewBox="0 0 24 24" aria-hidden="true"><use href="#ico-fb"/></svg>
             </a>
           </div>
@@ -1263,10 +1263,6 @@ footer a:hover{color:var(--blue-hot)}
 </footer>
 
 <!-- ============ BACKGROUND MUSIC (YouTube) ============ -->
-<!-- The YouTube player is created and controlled via the IFrame API.
-     Replace the video ID in the script below with your desired track.
-     Current ID: "fKopy74weus" (Imagine Dragons – Thunder official video).
-     For the lyrics version, use the ID of your preferred upload. -->
 <div id="youtube-audio" style="position:fixed; width:0; height:0; overflow:hidden; pointer-events:none; opacity:0;"></div>
 
 <button id="music-toggle" type="button" aria-pressed="false" aria-label="Unmute background music">
@@ -1396,9 +1392,6 @@ document.querySelectorAll('.reveal').forEach((el, i) => {
    BACKGROUND MUSIC — YouTube IFrame API
    ============================================================ */
 (function(){
-  // ------------------------------------------------------------
-  // 1. Load the YouTube IFrame API
-  // ------------------------------------------------------------
   if (!window.YT) {
     const tag = document.createElement('script');
     tag.src = 'https://www.youtube.com/iframe_api';
@@ -1406,40 +1399,33 @@ document.querySelectorAll('.reveal').forEach((el, i) => {
     firstScriptTag.parentNode.insertBefore(tag, firstScriptTag);
   }
 
-  // ------------------------------------------------------------
-  // 2. Player state
-  // ------------------------------------------------------------
   const container = document.getElementById('youtube-audio');
   const btn       = document.getElementById('music-toggle');
   const icoOff    = btn.querySelector('.ico-off');
   const icoOn     = btn.querySelector('.ico-on');
 
   let player      = null;
-  let isPlaying   = false;   // true = unmuted & playing
+  let isPlaying   = false;
   let playerReady = false;
 
   // >>> REPLACE THE VIDEO ID BELOW WITH YOUR OWN <<<
-  // Current: Imagine Dragons – Thunder (official video)
   const VIDEO_ID = 'fKopy74weus';
 
-  // ------------------------------------------------------------
-  // 3. Initialise the player when the API is ready
-  // ------------------------------------------------------------
   window.onYouTubeIframeAPIReady = function() {
     player = new YT.Player(container, {
       videoId: VIDEO_ID,
       playerVars: {
-        autoplay: 1,          // start muted & playing so autoplay is allowed
+        autoplay: 1,
         controls: 0,
         disablekb: 1,
         fs: 0,
         loop: 1,
-        playlist: VIDEO_ID,   // required for loop
+        playlist: VIDEO_ID,
         modestbranding: 1,
         rel: 0,
         showinfo: 0,
         playsinline: 1,
-        mute: 1               // start muted
+        mute: 1
       },
       events: {
         onReady: onPlayerReady,
@@ -1450,30 +1436,23 @@ document.querySelectorAll('.reveal').forEach((el, i) => {
 
   function onPlayerReady(event) {
     playerReady = true;
-    // Start playing muted to satisfy browser autoplay policies
     event.target.playVideo();
     event.target.mute();
     paint();
   }
 
   function onPlayerStateChange(event) {
-    // If the video ends (shouldn't happen due to loop, but just in case)
     if (event.data === YT.PlayerState.ENDED) {
       player.seekTo(0);
       player.playVideo();
     }
-    // If the player is paused externally, update the UI
     if (event.data === YT.PlayerState.PAUSED) {
       if (isPlaying) {
-        // Try to resume
         player.playVideo();
       }
     }
   }
 
-  // ------------------------------------------------------------
-  // 4. UI paint
-  // ------------------------------------------------------------
   function paint() {
     icoOff.style.display = isPlaying ? 'none'  : 'block';
     icoOn.style.display  = isPlaying ? 'block' : 'none';
@@ -1482,9 +1461,6 @@ document.querySelectorAll('.reveal').forEach((el, i) => {
     btn.setAttribute('aria-label', isPlaying ? 'Mute background music' : 'Unmute background music');
   }
 
-  // ------------------------------------------------------------
-  // 5. Toggle button
-  // ------------------------------------------------------------
   btn.addEventListener('click', () => {
     if (!playerReady || !player) return;
 
@@ -1502,7 +1478,6 @@ document.querySelectorAll('.reveal').forEach((el, i) => {
     paint();
   });
 
-  // Initial paint (off)
   paint();
 })();
 
@@ -1536,7 +1511,7 @@ document.querySelectorAll('.reveal').forEach((el, i) => {
   document.querySelectorAll('[data-game]').forEach(btn => {
     btn.addEventListener('click', () => {
       const id = btn.dataset.game;
-      if (!id || id === 'VIDEO_ID_HERE') return;  // skip placeholders
+      if (!id || id === 'VIDEO_ID_HERE') return;
       open(id, btn.dataset.name);
     });
   });
