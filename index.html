@@ -51,7 +51,6 @@ body{
   from{transform:translate3d(-3%, -2%, 0) scale(1)}
   to{transform:translate3d(4%, 3%, 0) scale(1.08)}
 }
-/* storm canvas is oversized + offset so the thunder shake never exposes an edge */
 #storm{
   position:fixed;top:0;left:0;z-index:2;pointer-events:none;
   will-change:transform;
@@ -192,7 +191,7 @@ nav.scrolled{
   border:1px solid var(--blue);background:transparent;color:var(--blue-hot);
   text-decoration:none;cursor:pointer;position:relative;overflow:hidden;
   display:inline-block;
-  transition:color .3s, box-shadow .3s, border-color .3s, background .3s;
+  transition:color .3s, box-shadow .3s, border-color .3s, background .3s, opacity .25s;
 }
 .btn::after{
   content:"";position:absolute;inset:0;
@@ -208,6 +207,9 @@ nav.scrolled{
 .btn.solid:hover{
   background:var(--blue-hot);border-color:var(--blue-hot);color:#03060c;
   box-shadow:0 0 34px rgba(46,155,255,.6);
+}
+.btn[disabled]{
+  opacity:.55;cursor:not-allowed;pointer-events:none;
 }
 @keyframes rise{from{opacity:0;transform:translateY(28px)} to{opacity:1;transform:translateY(0)}}
 
@@ -384,6 +386,31 @@ h2 em{font-style:normal;color:var(--blue);text-shadow:0 0 26px rgba(46,155,255,.
 }
 .m-role.lead{color:var(--blue)}
 .m-tag{font-size:13px;letter-spacing:.1em;color:var(--dim)}
+
+/* ---------- social links ---------- */
+.m-links{
+  display:flex;justify-content:center;flex-wrap:wrap;gap:9px;
+  margin-top:14px;
+}
+.m-links a.soc{
+  width:30px;height:30px;
+  display:flex;align-items:center;justify-content:center;
+  border:1px solid var(--line);
+  color:var(--dim);
+  text-decoration:none;
+  transition:border-color .25s, color .25s, background .25s, box-shadow .25s;
+}
+.m-links a.soc svg{width:13px;height:13px;fill:currentColor;display:block}
+.m-links a.soc:hover{
+  color:var(--blue-hot);
+  border-color:rgba(46,155,255,.55);
+  background:rgba(46,155,255,.08);
+  box-shadow:0 0 18px rgba(46,155,255,.25);
+}
+.m-links a.soc:focus-visible{outline:2px solid var(--blue);outline-offset:2px}
+
+.owner-info .m-links{justify-content:flex-start;margin-top:20px}
+@media(max-width:680px){.owner-info .m-links{justify-content:center}}
 
 /* ---------- call ---------- */
 .join{text-align:center;padding:130px 6vw 90px}
@@ -565,6 +592,40 @@ footer .fmark span{color:var(--blue)}
 footer a{color:var(--dim);text-decoration:none;transition:color .25s}
 footer a:hover{color:var(--blue-hot)}
 
+/* ---------- background music ---------- */
+#music-toggle{
+  position:fixed;right:22px;bottom:22px;z-index:30;
+  width:46px;height:46px;
+  display:flex;align-items:center;justify-content:center;
+  border:1px solid rgba(46,155,255,.45);
+  background:rgba(4,7,13,.75);
+  backdrop-filter:blur(10px);
+  color:var(--blue-hot);
+  cursor:pointer;padding:0;
+  transition:border-color .25s, color .25s, box-shadow .25s, background .25s;
+}
+#music-toggle:hover{
+  border-color:var(--blue-hot);
+  color:#fff;
+  background:rgba(46,155,255,.10);
+  box-shadow:0 0 24px rgba(46,155,255,.35);
+}
+#music-toggle:focus-visible{outline:2px solid var(--blue);outline-offset:3px}
+#music-toggle svg{width:19px;height:19px;fill:currentColor;display:block}
+#music-toggle.playing::after{
+  content:"";position:absolute;inset:-1px;
+  border:1px solid var(--blue-hot);
+  animation:musicPulse 1.8s ease-out infinite;
+  pointer-events:none;
+}
+@keyframes musicPulse{
+  0%  {opacity:.55; transform:scale(1)}
+  100%{opacity:0;   transform:scale(1.5)}
+}
+@media(prefers-reduced-motion:reduce){
+  #music-toggle.playing::after{animation:none;opacity:0}
+}
+
 /* ---------- reveal ---------- */
 .reveal{
   opacity:0;transform:translateY(30px);
@@ -581,7 +642,7 @@ footer a:hover{color:var(--blue-hot)}
 </head>
 <body>
 
-<!-- ============ SVG SPRITE (brand mark, drawn once) ============ -->
+<!-- ============ SVG SPRITE (brand mark + icons, drawn once) ============ -->
 <svg width="0" height="0" style="position:absolute" aria-hidden="true">
   <defs>
     <radialGradient id="discGrad" cx="50%" cy="42%" r="60%">
@@ -617,6 +678,9 @@ footer a:hover{color:var(--blue-hot)}
       <polygon points="30,548 872,548 836,662 0,662" fill="rgba(4,7,13,0.55)" stroke="#2e9bff" stroke-width="2"/>
       <text x="450" y="627" text-anchor="middle" font-family="Orbitron, sans-serif" font-size="74" font-weight="900" letter-spacing="3" fill="url(#steelGrad)" stroke="#131b26" stroke-width="2" paint-order="stroke fill">STORMINGBREAKER</text>
     </g>
+    <symbol id="ico-fb" viewBox="0 0 24 24">
+      <path d="M22 12.06C22 6.5 17.52 2 12 2S2 6.5 2 12.06c0 5.02 3.66 9.18 8.44 9.94v-7.03H7.9v-2.9h2.54V9.85c0-2.52 1.5-3.91 3.77-3.91 1.09 0 2.24.2 2.24.2v2.46h-1.26c-1.24 0-1.63.78-1.63 1.57v1.89h2.78l-.45 2.9h-2.33V22c4.78-.76 8.44-4.92 8.44-9.94z"/>
+    </symbol>
   </defs>
 </svg>
 <!-- ============ /SVG SPRITE ============ -->
@@ -705,6 +769,7 @@ footer a:hover{color:var(--blue-hot)}
       <p class="lede">One hand on the wheel. Two squads under it. The rest holding the line.</p>
     </div>
 
+    <!-- OWNER -->
     <div class="tier reveal">
       <div class="tier-label">Owner <span>01</span></div>
       <div class="owner-card">
@@ -720,10 +785,16 @@ footer a:hover{color:var(--blue-hot)}
             and answers for everything under the name. If it carries STRM, it passed
             through here first.
           </p>
+          <div class="m-links">
+            <a class="soc" href="https://facebook.com/strm.skre" target="_blank" rel="noopener noreferrer" aria-label="Facebook — STRM—S'KRE">
+              <svg viewBox="0 0 24 24" aria-hidden="true"><use href="#ico-fb"/></svg>
+            </a>
+          </div>
         </div>
       </div>
     </div>
 
+    <!-- DIVISION LEADERS -->
     <div class="tier tier-leaders reveal">
       <div class="tier-label">Division Leaders <span>01</span></div>
       <div class="roster-grid">
@@ -732,10 +803,16 @@ footer a:hover{color:var(--blue-hot)}
           <div class="avatar">XI</div>
           <div class="m-name">STRM—X'IRT</div>
           <div class="m-role lead">Division Lead</div>
+          <div class="m-links">
+            <a class="soc" href="https://facebook.com/strm.xirt" target="_blank" rel="noopener noreferrer" aria-label="Facebook — STRM—X'IRT">
+              <svg viewBox="0 0 24 24" aria-hidden="true"><use href="#ico-fb"/></svg>
+            </a>
+          </div>
         </div>
       </div>
     </div>
 
+    <!-- STRQ -->
     <div class="tier reveal">
       <div class="tier-label">STRQ <span>05</span></div>
       <div class="roster-grid">
@@ -743,30 +820,56 @@ footer a:hover{color:var(--blue-hot)}
           <svg class="corner-mark" viewBox="0 0 900 760" xmlns="http://www.w3.org/2000/svg" aria-hidden="true"><use href="#brandMark"/></svg>
           <div class="avatar">IS</div>
           <div class="m-name">STRQ—ISAY</div>
+          <div class="m-links">
+            <a class="soc" href="https://facebook.com/strq.isay" target="_blank" rel="noopener noreferrer" aria-label="Facebook — STRQ—ISAY">
+              <svg viewBox="0 0 24 24" aria-hidden="true"><use href="#ico-fb"/></svg>
+            </a>
+          </div>
         </div>
         <div class="member-card">
           <svg class="corner-mark" viewBox="0 0 900 760" xmlns="http://www.w3.org/2000/svg" aria-hidden="true"><use href="#brandMark"/></svg>
           <div class="avatar">GE</div>
           <div class="m-name">STRQ—GEL</div>
+          <div class="m-links">
+            <a class="soc" href="https://facebook.com/strq.gel" target="_blank" rel="noopener noreferrer" aria-label="Facebook — STRQ—GEL">
+              <svg viewBox="0 0 24 24" aria-hidden="true"><use href="#ico-fb"/></svg>
+            </a>
+          </div>
         </div>
         <div class="member-card">
           <svg class="corner-mark" viewBox="0 0 900 760" xmlns="http://www.w3.org/2000/svg" aria-hidden="true"><use href="#brandMark"/></svg>
           <div class="avatar">AS</div>
           <div class="m-name">STRQ—ASHIEE</div>
+          <div class="m-links">
+            <a class="soc" href="https://facebook.com/strq.ashiee" target="_blank" rel="noopener noreferrer" aria-label="Facebook — STRQ—ASHIEE">
+              <svg viewBox="0 0 24 24" aria-hidden="true"><use href="#ico-fb"/></svg>
+            </a>
+          </div>
         </div>
         <div class="member-card">
           <svg class="corner-mark" viewBox="0 0 900 760" xmlns="http://www.w3.org/2000/svg" aria-hidden="true"><use href="#brandMark"/></svg>
           <div class="avatar">SH</div>
           <div class="m-name">STRQ—SHIEE</div>
+          <div class="m-links">
+            <a class="soc" href="https://facebook.com/strq.shiee" target="_blank" rel="noopener noreferrer" aria-label="Facebook — STRQ—SHIEE">
+              <svg viewBox="0 0 24 24" aria-hidden="true"><use href="#ico-fb"/></svg>
+            </a>
+          </div>
         </div>
         <div class="member-card">
           <svg class="corner-mark" viewBox="0 0 900 760" xmlns="http://www.w3.org/2000/svg" aria-hidden="true"><use href="#brandMark"/></svg>
           <div class="avatar">JA</div>
           <div class="m-name">STRQ—JAYA</div>
+          <div class="m-links">
+            <a class="soc" href="https://facebook.com/strq.jaya" target="_blank" rel="noopener noreferrer" aria-label="Facebook — STRQ—JAYA">
+              <svg viewBox="0 0 24 24" aria-hidden="true"><use href="#ico-fb"/></svg>
+            </a>
+          </div>
         </div>
       </div>
     </div>
 
+    <!-- MEMBERS -->
     <div class="tier reveal">
       <div class="tier-label">Members <span>11</span></div>
       <div class="roster-grid">
@@ -774,56 +877,111 @@ footer a:hover{color:var(--blue-hot)}
           <svg class="corner-mark" viewBox="0 0 900 760" xmlns="http://www.w3.org/2000/svg" aria-hidden="true"><use href="#brandMark"/></svg>
           <div class="avatar">ER</div>
           <div class="m-name">STRM—`ERICZ</div>
+          <div class="m-links">
+            <a class="soc" href="https://facebook.com/strm.ericz" target="_blank" rel="noopener noreferrer" aria-label="Facebook — STRM—`ERICZ">
+              <svg viewBox="0 0 24 24" aria-hidden="true"><use href="#ico-fb"/></svg>
+            </a>
+          </div>
         </div>
         <div class="member-card">
           <svg class="corner-mark" viewBox="0 0 900 760" xmlns="http://www.w3.org/2000/svg" aria-hidden="true"><use href="#brandMark"/></svg>
           <div class="avatar">CE</div>
           <div class="m-name">STRM—CESS</div>
+          <div class="m-links">
+            <a class="soc" href="https://facebook.com/strm.cess" target="_blank" rel="noopener noreferrer" aria-label="Facebook — STRM—CESS">
+              <svg viewBox="0 0 24 24" aria-hidden="true"><use href="#ico-fb"/></svg>
+            </a>
+          </div>
         </div>
         <div class="member-card">
           <svg class="corner-mark" viewBox="0 0 900 760" xmlns="http://www.w3.org/2000/svg" aria-hidden="true"><use href="#brandMark"/></svg>
           <div class="avatar">BL</div>
           <div class="m-name">STRM—BLXND</div>
+          <div class="m-links">
+            <a class="soc" href="https://facebook.com/strm.blxnd" target="_blank" rel="noopener noreferrer" aria-label="Facebook — STRM—BLXND">
+              <svg viewBox="0 0 24 24" aria-hidden="true"><use href="#ico-fb"/></svg>
+            </a>
+          </div>
         </div>
         <div class="member-card">
           <svg class="corner-mark" viewBox="0 0 900 760" xmlns="http://www.w3.org/2000/svg" aria-hidden="true"><use href="#brandMark"/></svg>
           <div class="avatar">PR</div>
           <div class="m-name">STRM—PRO</div>
+          <div class="m-links">
+            <a class="soc" href="https://facebook.com/strm.pro" target="_blank" rel="noopener noreferrer" aria-label="Facebook — STRM—PRO">
+              <svg viewBox="0 0 24 24" aria-hidden="true"><use href="#ico-fb"/></svg>
+            </a>
+          </div>
         </div>
         <div class="member-card">
           <svg class="corner-mark" viewBox="0 0 900 760" xmlns="http://www.w3.org/2000/svg" aria-hidden="true"><use href="#brandMark"/></svg>
           <div class="avatar">JA</div>
           <div class="m-name">STRM—J`ASx</div>
+          <div class="m-links">
+            <a class="soc" href="https://facebook.com/strm.jasx" target="_blank" rel="noopener noreferrer" aria-label="Facebook — STRM—J`ASx">
+              <svg viewBox="0 0 24 24" aria-hidden="true"><use href="#ico-fb"/></svg>
+            </a>
+          </div>
         </div>
         <div class="member-card">
           <svg class="corner-mark" viewBox="0 0 900 760" xmlns="http://www.w3.org/2000/svg" aria-hidden="true"><use href="#brandMark"/></svg>
           <div class="avatar">MA</div>
           <div class="m-name">STRM—M'ART</div>
+          <div class="m-links">
+            <a class="soc" href="https://facebook.com/strm.mart" target="_blank" rel="noopener noreferrer" aria-label="Facebook — STRM—M'ART">
+              <svg viewBox="0 0 24 24" aria-hidden="true"><use href="#ico-fb"/></svg>
+            </a>
+          </div>
         </div>
         <div class="member-card">
           <svg class="corner-mark" viewBox="0 0 900 760" xmlns="http://www.w3.org/2000/svg" aria-hidden="true"><use href="#brandMark"/></svg>
           <div class="avatar">TK</div>
           <div class="m-name">STRM—TAKT</div>
+          <div class="m-links">
+            <a class="soc" href="https://www.facebook.com/profile.php?id=100091239154455" target="_blank" rel="noopener noreferrer" aria-label="Facebook — STRM—TAKT">
+              <svg viewBox="0 0 24 24" aria-hidden="true"><use href="#ico-fb"/></svg>
+            </a>
+          </div>
         </div>
         <div class="member-card">
           <svg class="corner-mark" viewBox="0 0 900 760" xmlns="http://www.w3.org/2000/svg" aria-hidden="true"><use href="#brandMark"/></svg>
           <div class="avatar">CH</div>
           <div class="m-name">STRM—CHER</div>
+          <div class="m-links">
+            <a class="soc" href="https://facebook.com/strm.cher" target="_blank" rel="noopener noreferrer" aria-label="Facebook — STRM—CHER">
+              <svg viewBox="0 0 24 24" aria-hidden="true"><use href="#ico-fb"/></svg>
+            </a>
+          </div>
         </div>
         <div class="member-card">
           <svg class="corner-mark" viewBox="0 0 900 760" xmlns="http://www.w3.org/2000/svg" aria-hidden="true"><use href="#brandMark"/></svg>
           <div class="avatar">CA</div>
           <div class="m-name">STRM—C`ARL</div>
+          <div class="m-links">
+            <a class="soc" href="https://facebook.com/strm.carl" target="_blank" rel="noopener noreferrer" aria-label="Facebook — STRM—C`ARL">
+              <svg viewBox="0 0 24 24" aria-hidden="true"><use href="#ico-fb"/></svg>
+            </a>
+          </div>
         </div>
         <div class="member-card">
           <svg class="corner-mark" viewBox="0 0 900 760" xmlns="http://www.w3.org/2000/svg" aria-hidden="true"><use href="#brandMark"/></svg>
           <div class="avatar">TE</div>
           <div class="m-name">STRM—TEMA</div>
+          <div class="m-links">
+            <a class="soc" href="https://facebook.com/strm.tema" target="_blank" rel="noopener noreferrer" aria-label="Facebook — STRM—TEMA">
+              <svg viewBox="0 0 24 24" aria-hidden="true"><use href="#ico-fb"/></svg>
+            </a>
+          </div>
         </div>
         <div class="member-card">
           <svg class="corner-mark" viewBox="0 0 900 760" xmlns="http://www.w3.org/2000/svg" aria-hidden="true"><use href="#brandMark"/></svg>
           <div class="avatar">XN</div>
           <div class="m-name">STRM—X'NJ</div>
+          <div class="m-links">
+            <a class="soc" href="https://facebook.com/strm.xnj" target="_blank" rel="noopener noreferrer" aria-label="Facebook — STRM—X'NJ">
+              <svg viewBox="0 0 24 24" aria-hidden="true"><use href="#ico-fb"/></svg>
+            </a>
+          </div>
         </div>
       </div>
     </div>
@@ -966,6 +1124,13 @@ footer a:hover{color:var(--blue-hot)}
         </div>
 
       </div>
+
+      <!-- honeypot: real people leave this empty, bots fill it in -->
+      <div style="position:absolute;left:-9999px" aria-hidden="true">
+        <label>Leave this empty
+          <input type="text" name="_gotcha" tabindex="-1" autocomplete="off">
+        </label>
+      </div>
     </form>
 
     <div id="apply-done" class="form-shell done" hidden>
@@ -989,6 +1154,29 @@ footer a:hover{color:var(--blue-hot)}
   <div>Stormbreaker</div>
   <div><a href="#">&copy; 2026 — All rights reserved</a></div>
 </footer>
+
+<!-- ============ BACKGROUND MUSIC ============ -->
+<!--
+  ▼ REPLACE THE src BELOW WITH YOUR OWN AUDIO FILE ▼
+  Save it next to index.html as "thunder.mp3", or update the path.
+
+  Autoplay-with-sound is blocked by every browser. The track starts
+  muted; the button is what unmutes it on first click.
+-->
+<audio id="bg-music"
+       src="thunder.mp3"
+       loop
+       preload="auto"
+       playsinline></audio>
+
+<button id="music-toggle" type="button" aria-pressed="false" aria-label="Unmute background music">
+  <svg class="ico-off" viewBox="0 0 24 24" aria-hidden="true">
+    <path d="M4 9v6h4l5 4V5L8 9H4zm15.5 3l2.5-2.5-1-1L18.5 11 16 8.5l-1 1L17.5 12 15 14.5l1 1 2.5-2.5 2.5 2.5 1-1L19.5 12z"/>
+  </svg>
+  <svg class="ico-on" viewBox="0 0 24 24" aria-hidden="true" style="display:none">
+    <path d="M4 9v6h4l5 4V5L8 9H4zm12.5 3a4.5 4.5 0 0 0-2.5-4v8a4.5 4.5 0 0 0 2.5-4zM14 2.2v2.1a7.5 7.5 0 0 1 0 15.4v2.1a9.6 9.6 0 0 0 0-19.6z"/>
+  </svg>
+</button>
 
 <script>
 /* ============================================================
@@ -1017,18 +1205,25 @@ document.querySelectorAll('.reveal').forEach((el, i) => {
 });
 
 /* ============================================================
-   APPLICATION FORM
+   APPLICATION FORM — posts to Discord webhook
    ------------------------------------------------------------
-   Validation is client-side only. To actually receive
-   submissions, point ENDPOINT at your handler and uncomment the
-   fetch block in submitApplication().
+   Paste your Discord webhook URL below.
+
+   SERVER SETTINGS → INTEGRATIONS → WEBHOOKS → NEW WEBHOOK
+   Copy the URL, paste it in place of the placeholder.
+
+   NOTE: the webhook URL is visible in page source. Anyone who
+   finds it can spam the channel. If that happens, delete the
+   webhook in Discord and create a new one.
    ============================================================ */
 (function(){
+  const WEBHOOK = 'https://discord.com/api/webhooks/PASTE_YOURS_HERE';
+
   const form   = document.getElementById('apply-form');
   const done   = document.getElementById('apply-done');
   const errBox = document.getElementById('form-error');
-
-  // const ENDPOINT = 'https://your-domain.example/api/apply';
+  const submitBtn   = form.querySelector('button[type="submit"]');
+  const submitLabel = submitBtn.textContent;
 
   function markInvalid(){
     let firstBad = null;
@@ -1081,24 +1276,60 @@ document.querySelectorAll('.reveal').forEach((el, i) => {
   });
 
   function submitApplication(data){
-    /* ---------- wire this up when you have a backend ----------
-    fetch(ENDPOINT, {
-      method:'POST',
-      headers:{'Content-Type':'application/json'},
-      body: JSON.stringify({
-        ...Object.fromEntries(data),
-        skills: data.getAll('skills')
-      })
-    })
-    .then(r => { if (!r.ok) throw new Error(r.status); showDone(); })
-    .catch(() => { errBox.textContent = 'Submission failed — try again in a moment.'; errBox.hidden = false; });
-    ------------------------------------------------------------ */
+    // honeypot — silent drop if filled
+    if (data.get('_gotcha')){
+      showDone();
+      return;
+    }
 
-    console.log('Application payload:', {
-      ...Object.fromEntries(data),
-      skills: data.getAll('skills')
+    submitBtn.disabled = true;
+    submitBtn.textContent = 'Sending…';
+
+    const obj = Object.fromEntries(data);
+    const skills = data.getAll('skills');
+
+    // Discord limits each embed field value to 1024 chars — trim if needed
+    const clamp = (s, n) => {
+      s = String(s || '—');
+      return s.length > n ? s.slice(0, n - 1) + '…' : s;
+    };
+
+    const payload = {
+      username: 'STRM Applications',
+      embeds: [{
+        title: `New Application — ${clamp(obj.handle, 200)}`,
+        color: 0x2e9bff,
+        timestamp: new Date().toISOString(),
+        fields: [
+          { name: 'Contact',      value: clamp(obj.contact, 256),       inline: true  },
+          { name: 'Age',          value: clamp(obj.age, 8),             inline: true  },
+          { name: 'Region',       value: clamp(obj.region, 64),         inline: true  },
+          { name: 'Interest',     value: clamp(obj.interest, 64),       inline: true  },
+          { name: 'Availability', value: clamp(obj.availability, 32),   inline: true  },
+          { name: 'Referral',     value: clamp(obj.referral || 'none', 128), inline: true },
+          { name: 'Areas You Bring', value: skills.length ? skills.join(', ') : '—' },
+          { name: 'Experience',   value: clamp(obj.experience, 1024) },
+          { name: 'Why STRM',     value: clamp(obj.why, 1024) }
+        ],
+        footer: { text: 'STRM — Stormbreaker' }
+      }]
+    };
+
+    fetch(WEBHOOK, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(payload)
+    })
+    .then(r => {
+      if (!r.ok) throw new Error(r.status);
+      showDone();
+    })
+    .catch(() => {
+      errBox.textContent = 'Submission failed — try again in a moment, or contact us directly.';
+      errBox.hidden = false;
+      submitBtn.disabled = false;
+      submitBtn.textContent = submitLabel;
     });
-    showDone();
   }
 
   function showDone(){
@@ -1113,6 +1344,44 @@ document.querySelectorAll('.reveal').forEach((el, i) => {
 })();
 
 /* ============================================================
+   BACKGROUND MUSIC
+   ============================================================ */
+(function(){
+  const audio  = document.getElementById('bg-music');
+  const btn    = document.getElementById('music-toggle');
+  const icoOff = btn.querySelector('.ico-off');
+  const icoOn  = btn.querySelector('.ico-on');
+
+  audio.volume = 0.35;   // background level — raise or lower to taste
+
+  // start muted so the browser permits playback at all
+  audio.muted = true;
+  audio.play().catch(() => {});
+
+  let playing = false;
+
+  function paint(){
+    icoOff.style.display = playing ? 'none'  : 'block';
+    icoOn.style.display  = playing ? 'block' : 'none';
+    btn.classList.toggle('playing', playing);
+    btn.setAttribute('aria-pressed', String(playing));
+    btn.setAttribute('aria-label', playing ? 'Mute background music' : 'Unmute background music');
+  }
+  paint();
+
+  btn.addEventListener('click', () => {
+    playing = !playing;
+    if (playing){
+      audio.muted = false;
+      if (audio.paused) audio.play().catch(() => {});
+    } else {
+      audio.muted = true;
+    }
+    paint();
+  });
+})();
+
+/* ============================================================
    STORM — animated background
    rain · drifting cloud ceiling · slanted bolts
    thunder: impact shockwave + screen shake + warm sky wash
@@ -1120,12 +1389,11 @@ document.querySelectorAll('.reveal').forEach((el, i) => {
 (function(){
   const cvs = document.getElementById('storm');
   const ctx = cvs.getContext('2d');
-  const PAD = 48;                 // px of slack on each side for the shake
+  const PAD = 48;
   let W = 0, H = 0, dpr = 1;
   let last = performance.now();
   let t0 = last;
 
-  /* ---------- RAIN ---------- */
   const rain = [];
   function makeDrop(seed){
     const depth = Math.random();
@@ -1145,13 +1413,12 @@ document.querySelectorAll('.reveal').forEach((el, i) => {
     for (let i = 0; i < target; i++) rain.push(makeDrop(true));
   }
 
-  /* ---------- LIGHTNING ---------- */
   const bolts = [];
-  const thunderQueue = [];    // { at, x, y } — delayed rumble triggers
-  const shockwaves = [];      // expanding rings spawned when thunder fires
-  let flash = 0;              // immediate sky flash
-  let thunder = 0;            // delayed warm wash
-  let shakeAmp = 0;           // screen shake strength (px)
+  const thunderQueue = [];
+  const shockwaves = [];
+  let flash = 0;
+  let thunder = 0;
+  let shakeAmp = 0;
   let spawnClock = 0;
   let nextSpawn = 1.4;
 
@@ -1173,12 +1440,10 @@ document.querySelectorAll('.reveal').forEach((el, i) => {
       cx = nx; cy = ny;
     }
 
-    // strike point = where the bolt meets the ground
     const endSeg = segs[segs.length - 1];
     const hitX = endSeg[2];
     const hitY = endSeg[3];
 
-    // branches generated once, then drawn as static geometry that fades
     const forks = [];
     const forkCount = 2 + Math.floor(Math.random() * 3);
     for (let f = 0; f < forkCount; f++){
@@ -1197,7 +1462,6 @@ document.querySelectorAll('.reveal').forEach((el, i) => {
     }
 
     flash = Math.min(1, flash + 0.75);
-    // queue the rumble — it arrives after the light and lands at the strike point
     thunderQueue.push({
       at: now + 0.14 + Math.random() * 0.55,
       x: hitX,
@@ -1207,7 +1471,6 @@ document.querySelectorAll('.reveal').forEach((el, i) => {
     return { segs, forks, life: 1, decay: 1.6 + Math.random() * 1.6 };
   }
 
-  /* ---------- CLOUD CEILING ---------- */
   const clouds = [
     { x: 0.18, y: 0.10, r: 0.44, a: 0.10, spd:  0.010 },
     { x: 0.55, y: 0.05, r: 0.52, a: 0.12, spd: -0.007 },
@@ -1245,7 +1508,6 @@ document.querySelectorAll('.reveal').forEach((el, i) => {
     ctx.fillRect(0, H * 0.5, W, H * 0.5);
   }
 
-  /* ---------- RAIN ---------- */
   function drawRain(dt){
     ctx.lineCap = 'round';
     const baseGlow = 0.8 + flash * 0.7 + thunder * 0.35;
@@ -1273,7 +1535,6 @@ document.querySelectorAll('.reveal').forEach((el, i) => {
     }
   }
 
-  /* ---------- LIGHTNING BOLTS ---------- */
   function drawBolts(dt){
     for (let i = bolts.length - 1; i >= 0; i--){
       const b = bolts[i];
@@ -1312,19 +1573,17 @@ document.querySelectorAll('.reveal').forEach((el, i) => {
     }
   }
 
-  /* ---------- THUNDER SHOCKWAVES ---------- */
   function drawShockwaves(dt){
     for (let i = shockwaves.length - 1; i >= 0; i--){
       const s = shockwaves[i];
       s.life -= s.decay * dt;
       if (s.life <= 0){ shockwaves.splice(i, 1); continue; }
 
-      const p = 1 - s.life;                 // 0 → 1 expansion progress
-      const eased = 1 - Math.pow(1 - p, 2); // ease-out
+      const p = 1 - s.life;
+      const eased = 1 - Math.pow(1 - p, 2);
       const r = s.maxR * eased;
       const a = s.life * s.intensity;
 
-      // hot core at the impact point — fades slower than the ring
       const coreR = 6 * dpr + 42 * dpr * (1 - s.life);
       const coreG = ctx.createRadialGradient(s.x, s.y, 0, s.x, s.y, coreR);
       coreG.addColorStop(0,   `rgba(230,245,255,${s.life * 0.75})`);
@@ -1333,14 +1592,12 @@ document.querySelectorAll('.reveal').forEach((el, i) => {
       ctx.fillStyle = coreG;
       ctx.fillRect(s.x - coreR, s.y - coreR, coreR * 2, coreR * 2);
 
-      // expanding ring
       ctx.strokeStyle = `rgba(180,220,255,${a * 0.55})`;
       ctx.lineWidth = (0.6 + s.life * 2.6) * dpr;
       ctx.beginPath();
       ctx.arc(s.x, s.y, r, 0, Math.PI * 2);
       ctx.stroke();
 
-      // inner halo riding the ring
       const haloR = r * 0.16;
       const halo = ctx.createRadialGradient(
         s.x, s.y, Math.max(0, r - haloR),
@@ -1356,18 +1613,15 @@ document.querySelectorAll('.reveal').forEach((el, i) => {
     }
   }
 
-  /* ---------- MAIN LOOP ---------- */
   function frame(now){
     const dt = Math.min(0.05, (now - last) / 1000);
     last = now;
     const t = (now - t0) / 1000;
 
-    // decay the ambient intensities
     flash    = Math.max(0, flash    - dt * 2.4);
     thunder  = Math.max(0, thunder  - dt * 0.9);
     shakeAmp = Math.max(0, shakeAmp - dt * 26 * dpr);
 
-    // fire queued rumbles — spawns a shockwave at the recorded strike point
     for (let i = thunderQueue.length - 1; i >= 0; i--){
       const q = thunderQueue[i];
       if (now >= q.at){
@@ -1387,7 +1641,6 @@ document.querySelectorAll('.reveal').forEach((el, i) => {
 
     ctx.clearRect(0, 0, W, H);
 
-    /* -- world layer: everything that shakes --------------------------------- */
     ctx.save();
     if (shakeAmp > 0.1){
       const sx = (Math.random() - 0.5) * shakeAmp;
@@ -1401,9 +1654,7 @@ document.querySelectorAll('.reveal').forEach((el, i) => {
     drawBolts(dt);
 
     ctx.restore();
-    /* ----------------------------------------------------------------------- */
 
-    /* -- screen-space overlays: fixed to the viewport, no shake -------------- */
     if (flash > 0.01){
       ctx.fillStyle = `rgba(126,200,255,${flash * 0.11})`;
       ctx.fillRect(0, 0, W, H);
@@ -1412,9 +1663,7 @@ document.querySelectorAll('.reveal').forEach((el, i) => {
       ctx.fillStyle = `rgba(200,230,255,${thunder * 0.07})`;
       ctx.fillRect(0, 0, W, H);
     }
-    /* ----------------------------------------------------------------------- */
 
-    // spawn schedule
     spawnClock += dt;
     if (spawnClock > nextSpawn){
       spawnClock = 0;
@@ -1425,7 +1674,6 @@ document.querySelectorAll('.reveal').forEach((el, i) => {
     requestAnimationFrame(frame);
   }
 
-  /* ---------- RESIZE (oversized + offset so shake never exposes an edge) ---- */
   function resize(){
     dpr = Math.min(devicePixelRatio || 1, 2);
     const cw = innerWidth  + PAD * 2;
@@ -1442,7 +1690,6 @@ document.querySelectorAll('.reveal').forEach((el, i) => {
   resize();
   addEventListener('resize', resize);
 
-  // seed a couple of bolts so the sky is alive on first paint
   const seedNow = performance.now();
   for (let i = 0; i < 3; i++){
     const b = makeBolt(seedNow);
